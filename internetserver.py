@@ -1,5 +1,5 @@
-import socket
-import octranspo
+from socket import *
+#import octranspo
 import thread
 import time
 
@@ -11,9 +11,10 @@ def broadcast():
 	print "BROADCASTING ON PORT:", UDP_PORT
 	print "MESSAGE:", MESSAGE
 
-	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	sock.connect(("127.0.0.1",3034))
-	sock.send(MESSAGE)
+	sock = socket(AF_INET, SOCK_DGRAM)
+	sock.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
+	sock.setsockopt(SOL_SOCKET,SO_BROADCAST,1)
+	sock.sendto(MESSAGE,("255.255.255.255",UDP_PORT))
 
 	print "Socket:", sock.getsockname()
 
@@ -21,7 +22,7 @@ def broadcast():
 		print "Listening:"
 		data,addr = sock.recvfrom(1024)
 		print "RECEIVED MESSAGE:", data		
-		result = octranspo.nextBus(data)
+		result = "octranspo.nextBus(data)"
 		print result
 
 def listen():

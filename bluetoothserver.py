@@ -29,5 +29,15 @@ def printOutput():
 
 if __name__ == "__main__":
     addrs = broadcast()
-    for a in addrs:
-        print (a)
+    port = 1
+    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    sock.connect(("7C:D1:C3:97:81:99",port))
+    sock.send("Hi!")
+    data = sock.recv(1024)
+    print data
+    sock.close()        
+    #for a in addrs:
+    #    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    #    sock.connect((a[0],port))
+    #    sock.send("Hi!")
+    #    sock.close()        
