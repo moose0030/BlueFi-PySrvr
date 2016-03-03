@@ -1,6 +1,7 @@
 #import thread
 import time
 import bluetooth
+import octranspo
 
 def broadcast():
     addrs = {}
@@ -32,9 +33,14 @@ if __name__ == "__main__":
     port = 1
     sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     sock.connect(("7C:D1:C3:97:81:99",port))
-    sock.send("Hi!")
-    data = sock.recv(1024)
-    print data
+    sock.send("Thank you for using SOPTS!")
+    while True:
+        data = sock.recv(1024)
+        print data
+        if data == "quit"
+            break;
+        result = octranspo.nextBus(data)
+        sock.send(result)
     sock.close()        
     #for a in addrs:
     #    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)

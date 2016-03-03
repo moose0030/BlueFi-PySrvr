@@ -6,14 +6,19 @@ sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 # Bind to broadcast address
 sock.bind(('0.0.0.0',UDP_PORT))
 print "Socket:", sock.getsockname()
+count = 0
 while True:
+        if count == 3:
+                break
 	data,addr = sock.recvfrom(1024)
 	print "RECEIVED MESSAGE:", data, addr
 	print addr[1]
 	print data
-	while True:
-		#print "TRYING TO SEND"
-		if data == "CONNECT:4905":
-			sock.sendto(bus,addr)
-			print "MESSAGE SENT"
-			data = " " 
+	#print "TRYING TO SEND"
+	if data == "REQ":
+                sock.sendto(bus,addr)
+                data,addr = sock.recvfrom(1024)
+                print data
+                count += 1
+                        
+sock.close()

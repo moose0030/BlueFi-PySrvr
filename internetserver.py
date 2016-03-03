@@ -1,44 +1,56 @@
 from socket import *
-#import octranspo
+import octranspo
 import thread
 import time
+import select
 
-def broadcast():
-	UDP_IP = "0.0.0.0"
+def setup():
+        UDP_IP = "0.0.0.0"
 	UDP_PORT = 3034
-	MESSAGE = "CONNECT:4905"
-
+	MESSAGE = "REQ"
+        
 	print "BROADCASTING ON PORT:", UDP_PORT
 	print "MESSAGE:", MESSAGE
 
 	sock = socket(AF_INET, SOCK_DGRAM)
+	sock.setblocking(0)
 	sock.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
 	sock.setsockopt(SOL_SOCKET,SO_BROADCAST,1)
-	sock.sendto(MESSAGE,("255.255.255.255",UDP_PORT))
+	return sock,MESSAGE,UDP_PORT
+        
 
-	print "Socket:", sock.getsockname()
-
-	while True:
-		print "Listening:"
-		data,addr = sock.recvfrom(1024)
-		print "RECEIVED MESSAGE:", data		
-		result = "octranspo.nextBus(data)"
-		print result
-
-def listen():
-	while True:
-		try:
-			#mode = int(raw_input())
-			#if mode is 1:
-			thread.start_new_thread(printOutput,())
-		except ValueError:
-			print "Not a number"
+def broadcast(sock,msg,port):
+        while True:
+                sock.sendto(msg,("255.255.255.255",port))
+		ready = select.select([sock],[],[], 1)
+                if ready[0]:
+                        data,addr = sock.recvfrom(1024)
+                        print data
+                        if data == "kill":
+                                break
+                        result = octranspo.nextBus(data)
+                        print result
+                        sock.sendto(result[0],addr)
+                        
+	sock.close()
 
 def printOutput():
-	#print "New Thread added"
+	print "New Thread added"
 	count = 0
  	while count < 5:
 		time.sleep(5)
 		count+=1
 		print "Added via internet"
-broadcast()
+
+def listen(sock):
+        #print "SYN+ACK --->"
+        #sock.sendto("SYN+ACK",("255.255.255.255",port))
+        #data,addr = sock.recvfrom(1024)
+        #print data
+        result = octranspo.nextBus(data)
+	print result
+	sock.sendto(result[0],addr)
+
+
+socket,message,port = setup()
+broadcast(socket,message,port)
