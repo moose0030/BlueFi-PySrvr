@@ -8,7 +8,7 @@ sock.bind(('0.0.0.0',UDP_PORT))
 print "Socket:", sock.getsockname()
 count = 0
 while True:
-        if count == 3:
+        if count == 9:
                 break
 	data,addr = sock.recvfrom(1024)
 	print "RECEIVED MESSAGE:", data, addr
@@ -17,8 +17,12 @@ while True:
 	#print "TRYING TO SEND"
 	if data == "REQ":
                 sock.sendto(bus,addr)
-                data,addr = sock.recvfrom(1024)
-                print data
-                count += 1
+                data = ""
+                while True:
+                        data,addr = sock.recvfrom(1024)
+                        if data != "REQ":
+                                print data
+                                count += 1
+                                break
                         
 sock.close()

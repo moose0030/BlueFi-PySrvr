@@ -1,7 +1,16 @@
-#import thread
+import thread
 import time
 import bluetooth
 import octranspo
+
+def setup():
+    while True:
+        clients = broadcast()
+        port = 1
+        sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+        for client in clients:
+            thread.start_new_thread(comms,(client, sock, port))
+    return sock
 
 def broadcast():
     addrs = {}
@@ -12,38 +21,29 @@ def broadcast():
         addrs[addr] = name
     return addrs   
 
-def listen():
-	while True:
-		try:
-			#mode = int(raw_input())
-			#if mode is 2:
-			thread.start_new_thread(printOutput,())
-		except ValueError:
-			print ("Not a number")
-
-def printOutput():
-    count = 0
-    while count < 5:
- #       time.sleep(10)
-        count+=1
-        print ("Added via bluetooth")
-
-if __name__ == "__main__":
-    addrs = broadcast()
-    port = 1
-    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    sock.connect(("7C:D1:C3:97:81:99",port))
-    sock.send("Thank you for using SOPTS!")
-    while True:
-        data = sock.recv(1024)
-        print data
-        if data == "quit"
-            break;
-        result = octranspo.nextBus(data)
-        sock.send(result)
-    sock.close()        
+def comms(client, sock, port):
+    print client
+    try:
+        sock.connect((client,port))
+        sock.send("Thank you for using SOPTS!")
+        while True:
+            data = sock.recv(1024)
+            print data
+            if data == "kill":
+                break;
+            result = octranspo.nextBus(data)
+            sock.send(result[0])
+            break
+    except Exception:
+        print "Exception"
+        
+    sock.close()   
+    
+socket = setup()
+#comms(socket)
+         
     #for a in addrs:
-    #    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+     #   sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     #    sock.connect((a[0],port))
     #    sock.send("Hi!")
     #    sock.close()        
