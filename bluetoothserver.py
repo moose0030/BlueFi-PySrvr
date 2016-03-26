@@ -1,49 +1,47 @@
 import thread
 import time
-import bluetooth
 import octranspo
+from bluetooth import *
 
 def setup():
-    while True:
-        clients = broadcast()
-        port = 1
-        sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        for client in clients:
-            thread.start_new_thread(comms,(client, sock, port))
-    return sock
+    server_sock=BluetoothSocket( RFCOMM )
+    server_sock.bind(("",PORT_ANY))
+    server_sock.listen(1)
 
-def broadcast():
-    addrs = {}
-    nearby = bluetooth.discover_devices(flush_cache=True)
-    for addr in nearby:
-        name = bluetooth.lookup_name(addr, 5)
-        print (addr, name)
-        addrs[addr] = name
-    return addrs   
+    port = server_sock.getsockname()[1]
 
-def comms(client, sock, port):
-    print client
+    uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+
+    advertise_service( server_sock, "SampleServer",
+                       service_id = uuid,
+                       service_classes = [ uuid, SERIAL_PORT_CLASS ],
+                       profiles = [ SERIAL_PORT_PROFILE ], 
+    #                   protocols = [ OBEX_UUID ] 
+                        )
+                       
+    print "Waiting for connection on RFCOMM channel %d" % port
+    return server_sock
+
+def comms(server_sock):
+    client_sock, client_info = server_sock.accept()
+    print "Accepted connection from ", client_info
+
     try:
-        sock.connect((client,port))
-        sock.send("Thank you for using SOPTS!")
         while True:
-            data = sock.recv(1024)
-            print data
-            if data == "kill":
-                break;
+            data = client_sock.recv(1024)
+            print "received [%s]" % data
+            if len(data) == 0: break
             result = octranspo.nextBus(data)
-            sock.send(result[0])
-            break
-    except Exception:
-        print "Exception"
-        
-    sock.close()   
-    
-socket = setup()
-#comms(socket)
-         
-    #for a in addrs:
-     #   sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    #    sock.connect((a[0],port))
-    #    sock.send("Hi!")
-    #    sock.close()        
+            client_sock.send(result)
+            print "sent [%s]" % data
+    except IOError:
+        pass
+
+    print "disconnected"
+
+    client_sock.close()
+    server_sock.close()
+    print "all done"
+
+server = setup()
+comms(server)
