@@ -3,7 +3,7 @@ import MySQLdb
 
 def nextBus(bus):
 	# Open database
-	db = MySQLdb.connect("localhost", "root","reverse","octranspo")
+	db = MySQLdb.connect("localhost", "root","root","octranspo")
 
 	# Create cursor
 	cursor = db.cursor()

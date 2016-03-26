@@ -28,12 +28,21 @@ def comms(server_sock):
 
     try:
         while True:
+
             data = client_sock.recv(1024)
             print "received [%s]" % data
+
             if len(data) == 0: break
+            if data == 'close':
+                client_sock.close()
+                server_sock.close()
+                print "CLOSED SERVER"
+
             result = octranspo.nextBus(data)
+            result = result + '!'
             client_sock.send(result)
-            print "sent [%s]" % data
+            print "sent [%s]" % result
+            
     except IOError:
         pass
 
