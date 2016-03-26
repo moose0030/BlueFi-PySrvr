@@ -3,6 +3,7 @@ import octranspo
 import thread
 import time
 import select
+import threading
 
 def setup():
         UDP_IP = "0.0.0.0"
@@ -24,9 +25,11 @@ def broadcast(sock,msg,port):
                 sock.sendto(msg,("255.255.255.255",port))
 		ready = select.select([sock],[],[], 1)
                 if ready[0]:
-                        thread.start_new_thread(comms,(sock,))
-                else:
-                        pass
+                        print "found"
+                        #thread.start_new_thread(comms,(sock,))
+                        thread1 = ip_comms_thread(1,"IP Comms 1",sock)
+                        thread1.start()
+                
                         
 	sock.close()
 	
@@ -42,6 +45,18 @@ def comms(sock):
         except Exception:
                 print "Exception on listen"
                 return
+
+class ip_comms_thread(threading.Thread):
+    def __init__(self, threadID, name, sock):
+        threading.Thread.__init__(self)
+        self.ThreadID = threadID
+        self.name = name
+        self.sock = sock
+
+    def run(self):
+        print "Starting " + self.name
+        comms(self.sock)
+        print "Ending " + self.name
 
 #socket,message,port = setup()
 #broadcast(socket,message,port)

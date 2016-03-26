@@ -23,34 +23,30 @@ def setup():
     return server_sock
 
 def comms(server_sock):
-    client_sock, client_info = server_sock.accept()
-    print "Accepted connection from ", client_info
+    while True:
+        client_sock, client_info = server_sock.accept()
+        print "Accepted connection from ", client_info
 
-    try:
-        while True:
+        try:
+            while True:
 
-            data = client_sock.recv(1024)
-            print "received [%s]" % data
+                data = client_sock.recv(1024)
+                print "received [%s]" % data
 
-            if len(data) == 0: break
-            if data == 'close':
-                client_sock.close()
-                server_sock.close()
-                print "CLOSED SERVER"
+                if len(data) == 0: break
+                if data == 'close':
+                    client_sock.close()
+                    server_sock.close()
+                    print "CLOSED SERVER"
 
-            result = octranspo.nextBus(data)
-            result = result + '!'
-            client_sock.send(result)
-            print "sent [%s]" % result
-            
-    except IOError:
-        pass
+                result = octranspo.nextBus(data)
+                result = result + '!'
+                client_sock.send(result)
+                print "sent [%s]" % result
+                
+        except IOError:
+            pass
 
-    print "disconnected"
-
-    client_sock.close()
-    server_sock.close()
-    print "all done"
-
-server = setup()
-comms(server)
+#server = setup()
+#while True:
+    #comms(server)
