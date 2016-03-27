@@ -3,17 +3,6 @@ import bluetoothserver
 import thread
 import threading
 
-print "this is the server"
-socket,message,port = internetserver.setup()
-b_server = bluetoothserver.setup()
-
-#while True:
-    #thread.start_new_thread(internetserver.broadcast,(socket,message,port,))
-    #thread.start_new_thread(bluetoothserver.comms,(b_server,))
-    #print thread.active
-
-
-
 class bluetooth_thread(threading.Thread):
     def __init__(self, threadID, name, message):
         threading.Thread.__init__(self)
@@ -38,8 +27,22 @@ class internet_thread(threading.Thread):
         internetserver.broadcast(socket,message,port)
         print "Ending " + self.name
 
-thread1 = bluetooth_thread(1, "Thread BT1", "1")
-thread2 = internet_thread(2, "Thread IP1", "1")
+print "S   O   P   T   S"
+print "m   t   u   r   y"
+print "a   t   b   a   s"
+print "r   a   l   n   t"
+print "t   w   i   s   e"
+print "    a   c   i   m"
+print "            t"
+print "\nDeveloped by Matthew Preston"
+print "------------------------------"
+
+socket,message,port = internetserver.setup()
+b_server = bluetoothserver.setup()
+
+
+thread1 = bluetooth_thread(1, "BLUETOOTH SERVER THREAD", "1")
+thread2 = internet_thread(2, "IP SERVER THREAD", "1")
 thread1.start()
 thread2.start()
 

@@ -1,11 +1,11 @@
 from socket import *
 import octranspo
-import thread
 import time
 import select
 import threading
 
 def setup():
+        print "IP---INIT>>>>>>>>>>>>>>>>>>>>>"
         UDP_IP = "0.0.0.0"
 	UDP_PORT = 3034
 	MESSAGE = "REQ"
@@ -17,33 +17,40 @@ def setup():
 	sock.setblocking(0)
 	sock.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
 	sock.setsockopt(SOL_SOCKET,SO_BROADCAST,1)
+	print "IP---INIT--------------------<\n"
 	return sock,MESSAGE,UDP_PORT
         
 
 def broadcast(sock,msg,port):
+        n = 0
         while True:
                 sock.sendto(msg,("255.255.255.255",port))
 		ready = select.select([sock],[],[], 1)
+		
                 if ready[0]:
-                        print "found"
-                        #thread.start_new_thread(comms,(sock,))
-                        thread1 = ip_comms_thread(1,"IP Comms 1",sock)
+                        n = n + 1
+                        name = "IP Comms Thread #" + str(n)
+                        thread1 = ip_comms_thread(n,name,sock)
                         thread1.start()
-                
                         
 	sock.close()
 	
 def comms(sock):
         try:
                 data,addr = sock.recvfrom(1024)
-                print data
-                if data == "kill":
+                print "RECEIVED [ %s ]" % data
+                if data == "kill":                      #CLIENT KILLING SERVER
+                        sock.sendto("TERMINATE",addr)
+                        sock.close()
                         return
-                result = octranspo.nextBus(data)
-                print result, " Good"
-                sock.sendto(result[0],addr)
+                if data == "TEST_WIFI":                 #CLIENT TESTING QUERY
+                        result = "SUCCESS!"
+                else:
+                        result = octranspo.nextBus(data)        #NORMAL QUERY
+                print "SENDING  [ %s ]" % result
+                sock.sendto(result,addr)
         except Exception:
-                print "Exception on listen"
+                print "Collision with UDP"
                 return
 
 class ip_comms_thread(threading.Thread):
@@ -57,6 +64,3 @@ class ip_comms_thread(threading.Thread):
         print "Starting " + self.name
         comms(self.sock)
         print "Ending " + self.name
-
-#socket,message,port = setup()
-#broadcast(socket,message,port)
