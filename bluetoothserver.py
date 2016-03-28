@@ -1,4 +1,4 @@
-import time
+import compare_time
 import octranspo
 from bluetooth import *
 

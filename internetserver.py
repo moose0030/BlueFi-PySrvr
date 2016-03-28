@@ -1,6 +1,7 @@
 from socket import *
 import octranspo
-import time
+#import time
+import compare_time
 import select
 import threading
 
