@@ -1,0 +1,16 @@
+SELECT arrival_time FROM StopTimes 
+	WHERE stop_id IN(
+		SELECT stop_id FROM Stops WHERE stop_code = '6860') 
+	
+	AND trip_id IN(
+		SELECT trip_id FROM Trips WHERE route_id IN(
+		SELECT route_id FROM Routes where route_short_name = '4')
+)
+
+
+SELECT StopTimes.arrival_time
+FROM Routes
+INNER JOIN Trips ON Trips.route_id = Routes.route_id
+INNER JOIN StopTimes ON StopTimes.stop_id = Stops.stop_id WHERE Stops.stop_code = '6860'
+INNER JOIN Routes ON Routes.route_id = Trips.route_id WHERE route_short_name = '4';
+
