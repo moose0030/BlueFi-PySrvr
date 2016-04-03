@@ -21,9 +21,9 @@ def nextBus(bus):
 	   results = cursor.fetchone()
 	   for row in results:
 	      name = row
-	      return name
+	      return ", arrives at " + name + "."
 	except:
-	   return "No times were available"
+	   return "No times were available."
 
 	# Disconnect
 	db.close()
