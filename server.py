@@ -12,7 +12,7 @@ class bluetooth_thread(threading.Thread):
 
     def run(self):
         print "Starting " + self.name
-        bluetoothserver.comms(b_server)
+        bluetoothserver.listen(b_server)
         print "Ending " + self.name
 
 class internet_thread(threading.Thread):

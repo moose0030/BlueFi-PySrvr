@@ -18,5 +18,4 @@ def testTLTT():
     print isTimeLaterThanNow(time1)
     print isTimeLaterThanNow(time2)
     print isTimeLaterThanNow(time3)
-    
-
+	
