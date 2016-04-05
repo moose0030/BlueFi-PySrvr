@@ -2,6 +2,7 @@ import internetserver
 import bluetoothserver
 import thread
 import threading
+from subprocess import call
 
 class bluetooth_thread(threading.Thread):
     def __init__(self, threadID, name, message):
@@ -37,6 +38,7 @@ print "            t"
 print "\nDeveloped by Matthew Preston"
 print "------------------------------"
 
+call(["sudo","hciconfig","hci0","piscan"])
 socket,message,port = internetserver.setup()
 b_server = bluetoothserver.setup()
 
