@@ -11,6 +11,9 @@ class bluetooth_thread(threading.Thread):
         self.name = name
         self.message = message
 
+    #def stop(self):
+        #self._stop.set()
+
     def run(self):
         print "Starting " + self.name
         bluetoothserver.listen(b_server)
@@ -47,5 +50,10 @@ thread1 = bluetooth_thread(1, "BLUETOOTH SERVER THREAD", "1")
 thread2 = internet_thread(2, "IP SERVER THREAD", "1")
 thread1.start()
 thread2.start()
+cmd = raw_input("Listening");
+if cmd == "kill":
+    b_server.close();
+    socket.close();
+    exit;
 
 print "Done!"
