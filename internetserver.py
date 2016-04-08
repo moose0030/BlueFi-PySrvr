@@ -1,13 +1,12 @@
 from socket import *
 import octranspo
-#import time
-import compare_time
+from datetime import datetime
 import select
 import threading
 
 def setup():
         print "IP---INIT>>>>>>>>>>>>>>>>>>>>>"
-        UDP_IP = "0.0.0.0"
+        #UDP_IP = "0.0.0.0"
 	UDP_PORT = 3034
 	MESSAGE = "REQ"
         
@@ -47,7 +46,12 @@ def comms(sock):
                 if data == "TEST_WIFI":                 #CLIENT TESTING QUERY
                         result = "SUCCESS!"
                 else:
+                        before = datetime.now()
                         result = octranspo.nextBus(data)        #NORMAL QUERY
+                        after = datetime.now()
+                        print "Wi-Fi DB:", after - before
+                        with open("logs.txt","a") as logfile:
+                                logfile.write("IP:"+str(after-before) + "\n")
                 print "SENDING  [ %s ]" % result
                 sock.sendto(result,addr)
         except Exception:

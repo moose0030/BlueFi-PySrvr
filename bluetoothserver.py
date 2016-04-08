@@ -1,4 +1,4 @@
-import compare_time
+from datetime import datetime
 import octranspo
 import threading
 from bluetooth import *
@@ -48,7 +48,13 @@ def comms(client_sock):
             if data == 'TEST_BT':           #CLIENT TESTING QUERY
                 result = 'SUCCESS!'
             else:                           #NORMAL QUERY
+                
+                before = datetime.now()
                 result = octranspo.nextBus(data)
+                after = datetime.now()
+                print "Bluetooth DB:", after - before
+                with open("logs.txt","a") as logfile:
+                        logfile.write("BT:"+str(after-before) + "\n")
             client_sock.send(result)
             print "SENDING  [ %s ]" % result
             
