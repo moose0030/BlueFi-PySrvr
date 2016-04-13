@@ -6,7 +6,6 @@ import threading
 
 def setup():
         print "IP---INIT>>>>>>>>>>>>>>>>>>>>>"
-        #UDP_IP = "0.0.0.0"
 	UDP_PORT = 3034
 	MESSAGE = "REQ"
         
@@ -50,8 +49,6 @@ def comms(sock):
                         result = octranspo.nextBus(data)        #NORMAL QUERY
                         after = datetime.now()
                         print "Wi-Fi DB:", after - before
-                        with open("logs.txt","a") as logfile:
-                                logfile.write("IP:"+str(after-before) + "\n")
                 print "SENDING  [ %s ]" % result
                 sock.sendto(result,addr)
         except Exception:

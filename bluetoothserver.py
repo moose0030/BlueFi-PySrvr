@@ -53,8 +53,6 @@ def comms(client_sock):
                 result = octranspo.nextBus(data)
                 after = datetime.now()
                 print "Bluetooth DB:", after - before
-                with open("logs.txt","a") as logfile:
-                        logfile.write("BT:"+str(after-before) + "\n")
             client_sock.send(result)
             print "SENDING  [ %s ]" % result
             
